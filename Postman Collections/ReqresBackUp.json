@@ -1,0 +1,248 @@
+{
+	"info": {
+		"_postman_id": "2886db9f-d6b8-42ff-9dd4-8467fd4ee0cf",
+		"name": "INVIO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ListOfUsers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/*statusCode değerinin kontrol edilmesi*/\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"/*E-mail formatlarının validasyonunun yapılması*/\r",
+							"const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$/i;\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"var data = jsonData.data;\r",
+							"\r",
+							"for (let i = 0; i < data.length; i++) {\r",
+							"  var email = data[i].email;\r",
+							"  var isEmailValid = emailPattern.test(email);\r",
+							"\r",
+							"  pm.test(\"Email user\"+(i+1)+\" check\", function () {\r",
+							"    pm.expect(isEmailValid).to.be.true;\r",
+							"  });\r",
+							"}\r",
+							"\r",
+							"/*Avatar URL’lerinde .jpg veya .JPG olduğunun teyit edilmesi*/\r",
+							"for (let i = 0; i < data.length; i++) {\r",
+							"  var user = data[i];\r",
+							"  var avatarUrl = user.avatar;\r",
+							"\r",
+							"  pm.test(\"Avatar URL\"+(i+1)+\" check\", function () {\r",
+							"    pm.expect(avatarUrl).to.match(/\\.jpe?g$/i);\r",
+							"  });\r",
+							"}\r",
+							"\r",
+							"/*Dönen user listesinin String formatta collectionVariables 'a kaydedilmesi*/\r",
+							"var jsonData = pm.response.json();\r",
+							"var userListString = JSON.stringify(jsonData.data);\r",
+							"\r",
+							"pm.collectionVariables.set(\"userList\", userListString);\r",
+							"\r",
+							"\r",
+							"\r",
+							"/*\r",
+							"var jsonData = pm.response.json();\r",
+							"var data = jsonData.data;\r",
+							"\r",
+							"for(var i = 0; i< data.length; i++ ){\r",
+							"    var email = data[i].email;\r",
+							"    */\r",
+							"/*\r",
+							"pm.environment.set(\"email\" + (i+1), email);\r",
+							"*/\r",
+							"/*\r",
+							"pm.test(\"b ) -> email\"+(i+1)+\" check\",function(){\r",
+							"    pm.expect(email).to.include(\"@\");\r",
+							"    pm.expect(email).to.include(\".\");\r",
+							"});\r",
+							"}\r",
+							"\r",
+							"/* \r",
+							"for(var i =1; i<= data.length; i++ ){..\r",
+							"}\r",
+							"*/\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"id": "9873cacf-9082-449c-9e7e-610de286aba9"
+					}
+				}
+			],
+			"_postman_id": "ad63f0d0-ea82-4bf1-9394-dac62de4dd42",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BaseURL}}/users?page=1&per_page=10",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "per_page",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SingleUser",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							"/*Rastgele bir kullanıcının id sinin alınması*/\r",
+							"\r",
+							"// userList değişkenini collectionVariables'dan al\r",
+							"var userListString = pm.collectionVariables.get('userList');\r",
+							"\r",
+							"// userList'ı JSON dizisine dönüştür\r",
+							"var userList = JSON.parse(userListString);\r",
+							"\r",
+							"// Rastgele bir kullanıcı indeksi seç\r",
+							"var randomIndex = Math.floor(Math.random() * userList.length);\r",
+							"\r",
+							"// Seçilen indeksteki kullanıcının ID'sini al\r",
+							"var userId = userList[randomIndex].id;\r",
+							"\r",
+							"// userId'yi environment değişkenine ata\r",
+							"pm.environment.set('userId', userId);\r",
+							"\r",
+							"\r",
+							"/*İlk kullanıcının id sinin alınması*/\r",
+							"\r",
+							"/*\r",
+							"// userList değişkenini collectionVariables'dan al\r",
+							"var userListString = pm.collectionVariables.get('userList');\r",
+							"\r",
+							"// userList'ı JSON dizisine dönüştür\r",
+							"var userList = JSON.parse(userListString);\r",
+							"\r",
+							"// İlk kullanıcının ID'sini al\r",
+							"var userId = userList[0].id;\r",
+							"\r",
+							"// userId'yi environment değişkenine ata\r",
+							"pm.environment.set('userId', userId);\r",
+							"*/\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"id": "293743a5-ce9c-484d-9248-05a399b30e70"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"id": "281fe481-6132-45eb-92b0-058dff736c3f"
+					}
+				}
+			],
+			"_postman_id": "9e5ae0c8-c7b3-4c46-bddc-78b5df83cf0f",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/users?page={{userId}}",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "{{userId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				],
+				"id": "e8eb31ce-9dd5-4812-be57-6046c675a650"
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				],
+				"id": "88dace80-64c4-4efe-831b-c9f187a12ad4"
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "9c6a4897-df2a-4118-8642-140684ad3c64",
+			"key": "userList",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
